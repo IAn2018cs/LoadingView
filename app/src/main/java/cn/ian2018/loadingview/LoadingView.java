@@ -28,6 +28,7 @@ public class LoadingView extends View {
     private boolean isFinish = false;
     private boolean isLoading = false;
     private ValueAnimator loadingAnimator;
+    private ValueAnimator finishAnimator;
 
     // 圆弧的宽度
     private float mStrokeWidth = 20;
@@ -43,7 +44,6 @@ public class LoadingView extends View {
     private TimeInterpolator loadingInterpolator = new LinearInterpolator();
     // 完成动画插值器
     private TimeInterpolator finishInterpolator = new LinearInterpolator();
-    private ValueAnimator finishAnimator;
 
     public LoadingView(Context context) {
         super(context);
@@ -190,7 +190,9 @@ public class LoadingView extends View {
         this.finishInterpolator = finishInterpolator;
     }
 
-    // 加载完成
+    /**
+     * 加载完成
+     */
     public void finishLoad() {
         if (isFinish) {
             return;
@@ -200,7 +202,9 @@ public class LoadingView extends View {
         finishAnimator.start();
     }
 
-    // 开始加载
+    /**
+     * 开始加载
+     */
     public void startLoading() {
         if (isLoading || isFinish) {
             return;
@@ -209,12 +213,19 @@ public class LoadingView extends View {
         loadingAnimator.start();
     }
 
-    // 停止动画
+    /**
+     * 停止动画
+     */
     public void stop() {
         loadingAnimator.cancel();
         finishAnimator.cancel();
     }
 
+    /**
+     * 当前是否正在加载
+     *
+     * @return
+     */
     public boolean isLoading() {
         return isLoading;
     }
