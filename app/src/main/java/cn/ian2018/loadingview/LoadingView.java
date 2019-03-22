@@ -30,6 +30,8 @@ public class LoadingView extends View {
     private ValueAnimator loadingAnimator;
     private ValueAnimator finishAnimator;
 
+    private OnLoadingListener loadingListener;
+
     // 圆弧的宽度
     private float mStrokeWidth = 20;
     // 开始的角度
@@ -148,6 +150,9 @@ public class LoadingView extends View {
             public void onAnimationEnd(Animator animation) {
                 isLoading = false;
                 isFinish = false;
+                if (loadingListener != null) {
+                    loadingListener.onFinish();
+                }
             }
 
             @Override
@@ -245,8 +250,19 @@ public class LoadingView extends View {
         if (isFinish) {
             float sweepAngle = 360 * mCurrent / 100;
             canvas.drawArc(mRectF, mStartAngle, sweepAngle, false, mCurrentPaint);
-        } else {
+        } else if (isLoading){
             canvas.drawArc(mRectF, mStartAngle, mLoadingSweepAngle, false, mCurrentPaint);
+        } else {
+            canvas.drawArc(mRectF, 0, 360, false, mCurrentPaint);
         }
     }
+
+    public void setOnLoadindListener(OnLoadingListener listener) {
+        loadingListener = listener;
+    }
+
+    public interface OnLoadingListener {
+        void onFinish();
+    }
 }
+
