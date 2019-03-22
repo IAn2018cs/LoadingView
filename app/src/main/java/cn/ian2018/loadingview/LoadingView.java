@@ -254,6 +254,8 @@ public class LoadingView extends View {
             canvas.drawArc(mRectF, mStartAngle, mLoadingSweepAngle, false, mCurrentPaint);
         } else {
             canvas.drawArc(mRectF, 0, 360, false, mCurrentPaint);
+            // TODO 完成 画对勾
+
         }
     }
 
