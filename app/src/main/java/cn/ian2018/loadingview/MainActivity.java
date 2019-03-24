@@ -9,7 +9,7 @@ import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
 
-    private LoadingView loadingView;
+    private Loading2View loadingView;
     private ImageLoadingView loadingView1;
 
     @Override
@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
         stophBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadingView.stop();
+                loadingView.cancel();
             }
         });
         startBt.setOnClickListener(new View.OnClickListener() {

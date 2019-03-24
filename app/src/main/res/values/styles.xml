@@ -10,12 +10,21 @@
 
     <declare-styleable name="LoadingView">
         <attr name="stroke_width" format="dimension" />
-        <attr name="background_color" format="color"/>
-        <attr name="progress_color" format="color"/>
-        <attr name="start_angle" format="float"/>
-        <attr name="loading_sweep_angle" format="float"/>
-        <attr name="loading_turn_around_time" format="integer"/>
-        <attr name="finish_time" format="integer"/>
+        <attr name="background_color" format="color" />
+        <attr name="progress_color" format="color" />
+        <attr name="start_angle" format="float" />
+        <attr name="loading_sweep_angle" format="float" />
+        <attr name="loading_turn_around_time" format="integer" />
+        <attr name="finish_time" format="integer" />
+    </declare-styleable>
+
+    <declare-styleable name="Loading2View">
+        <attr name="circle_radius" format="dimension" />
+        <attr name="stroke" format="dimension" />
+        <attr name="line_width" format="dimension" />
+        <attr name="loading_color" format="color" />
+        <attr name="circle_color" format="color" />
+        <attr name="line_color" format="color" />
     </declare-styleable>
 
 </resources>

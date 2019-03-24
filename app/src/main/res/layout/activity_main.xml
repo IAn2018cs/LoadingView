@@ -27,7 +27,7 @@
         android:id="@+id/stop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="停止"
+        android:text="重置"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
 
@@ -40,23 +40,27 @@
 
     <cn.ian2018.loadingview.ImageLoadingView
         android:id="@+id/image"
-        android:layout_width="300dp"
-        android:layout_height="400dp"
-        android:background="#000000"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:background="#2B3535"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <cn.ian2018.loadingview.LoadingView
+    <cn.ian2018.loadingview.Loading2View
         android:id="@+id/loading"
         android:layout_width="200dp"
         android:layout_height="200dp"
-        app:background_color="#a7a7a7"
+        app:circle_color="#33BFCF"
+        app:circle_radius="37dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:progress_color="#6ec7c7" />
+        app:line_color="#FFFFFF"
+        app:line_width="4dp"
+        app:loading_color="#33BFCF"
+        app:stroke="2dp" />
 
 </android.support.constraint.ConstraintLayout>
