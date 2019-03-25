@@ -304,8 +304,8 @@ public class Loading2View extends View {
                         mLinePaint);
                 // 画对勾第二条线
                 canvas.drawLine(mWidth / 2f, mHeight / 2f + mCircleRadius / 2f,
-                        mWidth / 2f + (float) ((mLength - mCircleRadius / 2f) * Math.cos(Math.toRadians(45))),
-                        mHeight / 2f + mCircleRadius / 2f - (float) ((mLength - mCircleRadius / 2f) * Math.sin(Math.toRadians(45))),
+                        mWidth / 2f + (float) ((mLength - mCircleRadius / 2f) * Math.cos(Math.toRadians(50))),
+                        mHeight / 2f + mCircleRadius / 2f - (float) ((mLength - mCircleRadius / 2f) * Math.sin(Math.toRadians(50))),
                         mLinePaint);
             }
 
