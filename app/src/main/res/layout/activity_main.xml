@@ -38,6 +38,7 @@
         android:text="完成"
         app:layout_constraintRight_toRightOf="parent" />
 
+
     <cn.ian2018.loadingview.ImageLoadingView
         android:id="@+id/image"
         android:layout_width="200dp"
@@ -48,19 +49,22 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <cn.ian2018.loadingview.Loading2View
-        android:id="@+id/loading"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        app:circle_color="#33BFCF"
-        app:circle_radius="37dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:line_color="#FFFFFF"
-        app:line_width="5dp"
-        app:loading_color="#33BFCF"
-        app:stroke="2dp" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <cn.ian2018.loadingview.Loading2View
+            android:id="@+id/loading"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            app:circle_color="#33BFCF"
+            app:circle_radius="37dp"
+           android:layout_centerInParent="true"
+            app:line_color="#FFFFFF"
+            app:line_width="5dp"
+            app:loading_color="#33BFCF"
+            app:stroke="2dp" />
+    </RelativeLayout>
+
 
 </android.support.constraint.ConstraintLayout>

@@ -52,6 +52,7 @@ public class Loading2View extends View {
     private ValueAnimator lineValueAnimator;
 
     private OnLoadingListener loadingListener;
+    private boolean isCancel = true;
 
     public Loading2View(Context context) {
         super(context);
@@ -172,7 +173,7 @@ public class Loading2View extends View {
                 postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        if (!isFinish) {
+                        if (!isFinish && !isCancel) {
                             valueAnimator1.start();
                         }
                     }
@@ -244,6 +245,7 @@ public class Loading2View extends View {
         if (isLoading || isFinish) {
             return;
         }
+        isCancel = false;
         isLoading = true;
         valueAnimator1.start();
     }
@@ -252,15 +254,16 @@ public class Loading2View extends View {
      * 停止动画
      */
     public void cancel() {
+        valueAnimator1.cancel();
+        valueAnimator2.cancel();
+        valueAnimator3.cancel();
+        isCancel = true;
         isLoading = false;
         isFinish = false;
         mRadius = 0;
         mLength = 0;
         mStartAngle = 0 - 90;
         mSweepAngle = 0;
-        valueAnimator1.cancel();
-        valueAnimator2.cancel();
-        valueAnimator3.cancel();
         invalidate();
     }
 
@@ -291,24 +294,23 @@ public class Loading2View extends View {
         if (isFinish) {
             // 画圆
             canvas.drawCircle(mWidth / 2f, mHeight / 2f, mRadius, mCirclePaint);
-            if (mLength <= mCircleRadius / 2f) {
+            if (mLength <= mCircleRadius * 0.4f) {
                 // 画对勾第一条线
                 canvas.drawLine(mWidth / 2f - mCircleRadius / 2f, mHeight / 2f,
-                        mWidth / 2f - mCircleRadius / 2f + (float) (mLength * Math.cos(Math.toRadians(45))),
-                        mHeight / 2f + (float) (mLength * Math.sin(Math.toRadians(45))),
+                        mWidth / 2f - mCircleRadius / 2f + (float) (mLength * Math.cos(Math.toRadians(38.65))),
+                        mHeight / 2f + (float) (mLength * Math.sin(Math.toRadians(38.65))),
                         mLinePaint);
             } else {
                 canvas.drawLine(mWidth / 2f - mCircleRadius / 2f, mHeight / 2f,
                         mWidth / 2f,
-                        mHeight / 2f + mCircleRadius / 2f,
+                        mHeight / 2f + mCircleRadius * 0.4f,
                         mLinePaint);
                 // 画对勾第二条线
-                canvas.drawLine(mWidth / 2f, mHeight / 2f + mCircleRadius / 2f,
-                        mWidth / 2f + (float) ((mLength - mCircleRadius / 2f) * Math.cos(Math.toRadians(50))),
-                        mHeight / 2f + mCircleRadius / 2f - (float) ((mLength - mCircleRadius / 2f) * Math.sin(Math.toRadians(50))),
+                canvas.drawLine(mWidth / 2f, mHeight / 2f + mCircleRadius * 0.4f,
+                        mWidth / 2f + (float) ((mLength - mCircleRadius * 0.4f) * Math.cos(Math.toRadians(55))),
+                        mHeight / 2f + mCircleRadius / 2f - (float) ((mLength - mCircleRadius * 0.4f) * Math.sin(Math.toRadians(55))),
                         mLinePaint);
             }
-
         } else {
             canvas.drawArc(mRectF, mStartAngle, mSweepAngle, false, mLoadingPaint);
         }
