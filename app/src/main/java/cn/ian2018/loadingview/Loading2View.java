@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
@@ -54,6 +55,16 @@ public class Loading2View extends View {
     private OnLoadingListener loadingListener;
     private boolean isCancel = true;
 
+    private Context mContext;
+    private float finishCircleRadius;
+
+    private float lengthPercent1 = 0.5f;
+    private float lengthPercent2 = 0.9f;
+    private float angle1 = 40;
+    private float angle2 = 55;
+    private float translateX = 0;
+    private float translateY = 0;
+
     public Loading2View(Context context) {
         super(context);
         init(context, null);
@@ -70,6 +81,7 @@ public class Loading2View extends View {
     }
 
     private void init(Context context, AttributeSet attrs) {
+        mContext = context;
         int circleColor = Color.BLUE;
         int loadingColor = Color.BLUE;
         int lineColor = Color.WHITE;
@@ -83,6 +95,8 @@ public class Loading2View extends View {
             lineColor = typedArray.getColor(R.styleable.Loading2View_line_color, Color.WHITE);
             typedArray.recycle();
         }
+
+        finishCircleRadius = dp2px(mContext, 37f);
 
         // 进度
         mLoadingPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -105,6 +119,34 @@ public class Loading2View extends View {
         mRectF = new RectF();
 
         initAnim();
+    }
+
+    public void setTranslateX(float translateX) {
+        this.translateX = dp2px(mContext, translateX);
+    }
+
+    public void setTranslateY(float translateY) {
+        this.translateY = dp2px(mContext, translateY);
+    }
+
+    public void setFinishCircleRadius(float finishCircleRadius) {
+        this.finishCircleRadius = dp2px(mContext, finishCircleRadius);
+    }
+
+    public void setLengthPercent1(float lengthPercent1) {
+        this.lengthPercent1 = lengthPercent1;
+    }
+
+    public void setLengthPercent2(float lengthPercent2) {
+        this.lengthPercent2 = lengthPercent2;
+    }
+
+    public void setAngle1(float angle1) {
+        this.angle1 = angle1;
+    }
+
+    public void setAngle2(float angle2) {
+        this.angle2 = angle2;
     }
 
     // 初始化动画
@@ -182,43 +224,45 @@ public class Loading2View extends View {
         });
 
         // 完成时的圆形动画
-        circleValueAnimator = ValueAnimator.ofFloat(0, mCircleRadius * 1.2f);
-        circleValueAnimator.setDuration(1000);
+        circleValueAnimator = ValueAnimator.ofFloat(0, finishCircleRadius);
+        circleValueAnimator.setDuration(900);
         circleValueAnimator.setInterpolator(new OvershootInterpolator());
         circleValueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
+                long currentPlayTime = animation.getCurrentPlayTime();
+                Log.d("CHEN", "onAnimationUpdate() returned: " + currentPlayTime);
                 mRadius = (float) animation.getAnimatedValue();
-                if (mRadius > mCircleRadius * 0.9f && mRadius < mCircleRadius) {
+                if (currentPlayTime > 400 && currentPlayTime < 420 && !lineValueAnimator.isRunning()) {
                     lineValueAnimator.start();
                 }
                 invalidate();
             }
         });
+        circleValueAnimator.addListener(new BaseAnimatorListener() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                if (loadingListener != null) {
+                    postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            isLoading = false;
+                            loadingListener.onFinish();
+                        }
+                    }, 600);
+                }
+            }
+        });
 
         // 画对勾的动画
-        lineValueAnimator = ValueAnimator.ofFloat(0, mCircleRadius / 2f * 3.0f);
+        lineValueAnimator = ValueAnimator.ofFloat(0, finishCircleRadius * (lengthPercent1 + lengthPercent2));
         lineValueAnimator.setDuration(500);
         lineValueAnimator.setInterpolator(new LinearInterpolator());
         lineValueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 mLength = (float) animation.getAnimatedValue();
-            }
-        });
-        lineValueAnimator.addListener(new BaseAnimatorListener() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                isLoading = false;
-                if (loadingListener != null) {
-                    postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            loadingListener.onFinish();
-                        }
-                    }, 400);
-                }
             }
         });
     }
@@ -232,6 +276,7 @@ public class Loading2View extends View {
             return;
         }
         isFinish = true;
+        isCancel = true;
         circleValueAnimator.start();
         valueAnimator1.cancel();
         valueAnimator2.cancel();
@@ -291,24 +336,26 @@ public class Loading2View extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
+
         if (isFinish) {
             // 画圆
             canvas.drawCircle(mWidth / 2f, mHeight / 2f, mRadius, mCirclePaint);
-            if (mLength <= mCircleRadius * 0.4f) {
+            canvas.translate(translateX, translateY);
+            if (mLength <= finishCircleRadius * lengthPercent1) {
                 // 画对勾第一条线
-                canvas.drawLine(mWidth / 2f - mCircleRadius / 2f, mHeight / 2f,
-                        mWidth / 2f - mCircleRadius / 2f + (float) (mLength * Math.cos(Math.toRadians(38.65))),
-                        mHeight / 2f + (float) (mLength * Math.sin(Math.toRadians(38.65))),
+                canvas.drawLine(mWidth / 2f - finishCircleRadius * lengthPercent1 * (float) Math.cos(Math.toRadians(angle1)), mHeight / 2f,
+                        mWidth / 2f - finishCircleRadius * lengthPercent1 * (float) Math.cos(Math.toRadians(angle1)) + (float) (mLength * Math.cos(Math.toRadians(angle1))),
+                        mHeight / 2f + (float) (mLength * Math.sin(Math.toRadians(angle1))),
                         mLinePaint);
             } else {
-                canvas.drawLine(mWidth / 2f - mCircleRadius / 2f, mHeight / 2f,
+                canvas.drawLine(mWidth / 2f - finishCircleRadius * lengthPercent1 * (float) Math.cos(Math.toRadians(angle1)), mHeight / 2f,
                         mWidth / 2f,
-                        mHeight / 2f + mCircleRadius * 0.4f,
+                        mHeight / 2f + finishCircleRadius * lengthPercent1 * (float) Math.sin(Math.toRadians(angle1)),
                         mLinePaint);
                 // 画对勾第二条线
-                canvas.drawLine(mWidth / 2f, mHeight / 2f + mCircleRadius * 0.4f,
-                        mWidth / 2f + (float) ((mLength - mCircleRadius * 0.4f) * Math.cos(Math.toRadians(55))),
-                        mHeight / 2f + mCircleRadius / 2f - (float) ((mLength - mCircleRadius * 0.4f) * Math.sin(Math.toRadians(55))),
+                canvas.drawLine(mWidth / 2f, mHeight / 2f + finishCircleRadius * lengthPercent1 * (float) Math.sin(Math.toRadians(angle1)),
+                        mWidth / 2f + (float) ((mLength - finishCircleRadius * lengthPercent1) * Math.cos(Math.toRadians(angle2))),
+                        mHeight / 2f + finishCircleRadius * lengthPercent1 * (float) Math.sin(Math.toRadians(angle1)) - (float) ((mLength - finishCircleRadius * lengthPercent1) * Math.sin(Math.toRadians(angle2))),
                         mLinePaint);
             }
         } else {
@@ -322,6 +369,11 @@ public class Loading2View extends View {
 
     public interface OnLoadingListener {
         void onFinish();
+    }
+
+    private int dp2px(Context context, float dp) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (dp * scale + 0.5f);
     }
 }
 

@@ -6,17 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="teshd"
-        android:textColor="#000"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <Button
         android:id="@+id/start"
         android:layout_width="wrap_content"
@@ -38,12 +27,62 @@
         android:text="完成"
         app:layout_constraintRight_toRightOf="parent" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/finish">
+
+        <EditText
+            android:id="@+id/edit1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="圆半径" />
+
+        <EditText
+            android:id="@+id/edit2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="第一条线百分比" />
+
+        <EditText
+            android:id="@+id/edit3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="第二条线百分比" />
+
+        <EditText
+            android:id="@+id/edit4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="第一个角度" />
+
+        <EditText
+            android:id="@+id/edit5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="第二个角度" />
+
+        <EditText
+            android:id="@+id/edit6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="x平移" />
+
+        <EditText
+            android:id="@+id/edit7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="y平移" />
+
+    </LinearLayout>
+
 
     <cn.ian2018.loadingview.ImageLoadingView
         android:id="@+id/image"
         android:layout_width="200dp"
         android:layout_height="200dp"
-        android:background="#aca8a8"
+        android:background="#22aca8a8"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -55,15 +94,15 @@
 
         <cn.ian2018.loadingview.Loading2View
             android:id="@+id/loading"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:layout_centerInParent="true"
             app:circle_color="#33BFCF"
-            app:circle_radius="37dp"
-           android:layout_centerInParent="true"
+            app:circle_radius="35dp"
             app:line_color="#FFFFFF"
             app:line_width="5dp"
             app:loading_color="#33BFCF"
-            app:stroke="2dp" />
+            app:stroke="3dp" />
     </RelativeLayout>
 
 
