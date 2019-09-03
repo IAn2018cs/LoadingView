@@ -29,14 +29,35 @@ public class Main2Activity extends AppCompatActivity {
             }
         });
 
+        findViewById(R.id.bt_check).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                progressView.startCheckAnim();
+            }
+        });
+
+        findViewById(R.id.bt_no_update).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                progressView.startFinishAnim();
+            }
+        });
+
         findViewById(R.id.bt_start).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 progressView.setMaxValue(100);
+                progressView.startDownloadAnim();
                 if (!valueAnimator1.isRunning()) {
-                    progressView.restore();
                     valueAnimator1.start();
                 }
+            }
+        });
+
+        findViewById(R.id.bt_fail).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                progressView.startFailAnim();
             }
         });
     }

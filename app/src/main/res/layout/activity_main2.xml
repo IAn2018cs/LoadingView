@@ -9,6 +9,7 @@
     <cn.ian2018.loadingview.RingProgressView
         android:id="@+id/progress_view"
         android:layout_width="200dp"
+        app:fail_color="#D54D4D"
         android:layout_height="200dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -18,12 +19,38 @@
         app:text_color="#161010" />
 
     <Button
+        android:id="@+id/bt_check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="检测"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/bt_no_update"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="完成"
+        app:layout_constraintEnd_toStartOf="@id/bt_start"
+        app:layout_constraintStart_toEndOf="@id/bt_check"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
         android:id="@+id/bt_start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="开始"
+        android:text="下载"
+        app:layout_constraintEnd_toStartOf="@id/bt_fail"
+        app:layout_constraintStart_toEndOf="@id/bt_no_update"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/bt_fail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="失败"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/bt_start"
         app:layout_constraintTop_toTopOf="parent" />
 
 

@@ -54,6 +54,7 @@ public class RingProgressView extends ViewGroup {
     private float mRadius;
 
     private int progressColor = Color.parseColor("#4061FF");
+    private int failColor = Color.parseColor("#D54D4D");
     private int textColor = Color.parseColor("#494A4B");
 
 
@@ -80,6 +81,7 @@ public class RingProgressView extends ViewGroup {
             TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RingProgressView);
             progressColor = typedArray.getColor(R.styleable.RingProgressView_ring_progress_color, progressColor);
             textColor = typedArray.getColor(R.styleable.RingProgressView_text_color, textColor);
+            failColor = typedArray.getColor(R.styleable.RingProgressView_fail_color, failColor);
             typedArray.recycle();
         }
 
@@ -108,11 +110,13 @@ public class RingProgressView extends ViewGroup {
         progressText = new TextView(context);
         progressText.setText("%");
         progressText.setTextColor(textColor);
+        progressText.setVisibility(GONE);
         addView(progressText);
 
         progressValueText = new TextView(context);
         progressValueText.setText("0");
         progressValueText.setTextColor(textColor);
+        progressValueText.setVisibility(GONE);
         addView(progressValueText);
 
         checkView = new ImageView(context);
@@ -127,12 +131,12 @@ public class RingProgressView extends ViewGroup {
         }
 
         // 外圈旋转动画
-        ObjectAnimator animator = ObjectAnimator.ofFloat(ringView, "rotation", 360f, 0f);
-        animator.setDuration(700);
-        animator.setInterpolator(new LinearInterpolator());
-        animator.setRepeatCount(ValueAnimator.INFINITE);
-        animator.setRepeatMode(ValueAnimator.RESTART);
-        animator.start();
+        ObjectAnimator rotationAnimator = ObjectAnimator.ofFloat(ringView, "rotation", 360f, 0f);
+        rotationAnimator.setDuration(700);
+        rotationAnimator.setInterpolator(new LinearInterpolator());
+        rotationAnimator.setRepeatCount(ValueAnimator.INFINITE);
+        rotationAnimator.setRepeatMode(ValueAnimator.RESTART);
+        rotationAnimator.start();
 
         // 结束动画1 外圈缩小加变透明
         ObjectAnimator animatorX = ObjectAnimator.ofFloat(ringView, "scaleX", 1.0f, 0.48f);
@@ -285,14 +289,60 @@ public class RingProgressView extends ViewGroup {
         progressValueText.setText(progressText);
         progressValueText.requestLayout();
         if (progress >= maxValue) {
-            finishLoad();
+            startFinishAnim();
         }
     }
 
     /**
-     * 重置状态
+     * 开始检测动画
      */
-    public void restore() {
+    public void startCheckAnim() {
+        progressText.setVisibility(GONE);
+        progressValueText.setVisibility(GONE);
+        restore();
+    }
+
+    /**
+     * 开始下载动画
+     */
+    public void startDownloadAnim() {
+        progressText.setVisibility(VISIBLE);
+        progressValueText.setVisibility(VISIBLE);
+        restore();
+    }
+
+    /**
+     * 完成的动画
+     */
+    public void startFinishAnim() {
+        if (isFinish) {
+            return;
+        }
+        isFinish = true;
+        circlePaint.setColor(progressColor);
+        alphaCirclePaint.setColor(progressColor);
+        checkView.setImageResource(R.drawable.ic_check);
+        finish1AnimSet.start();
+        finish2AnimSet.start();
+    }
+
+    /**
+     * TODO 失败动画
+     */
+    public void startFailAnim() {
+        if (isFinish) {
+            return;
+        }
+        isFinish = true;
+        circlePaint.setColor(failColor);
+        alphaCirclePaint.setColor(failColor);
+        checkView.setImageResource(R.drawable.ic_check);
+        finish1AnimSet.start();
+        finish2AnimSet.start();
+    }
+
+    // 重置状态
+    private void restore() {
         isFinish = false;
         mRadius = 0f;
         ringView.setScaleX(1f);
@@ -307,16 +357,6 @@ public class RingProgressView extends ViewGroup {
         alphaCirclePaint.setAlpha(255);
         setProgress(0);
         invalidate();
-    }
-
-    // 完成的动画
-    private void finishLoad() {
-        if (isFinish) {
-            return;
-        }
-        isFinish = true;
-        finish1AnimSet.start();
-        finish2AnimSet.start();
     }
 
     // 动态修改textview大小
