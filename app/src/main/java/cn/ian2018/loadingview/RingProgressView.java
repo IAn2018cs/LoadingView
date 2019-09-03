@@ -6,9 +6,12 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.Build;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
@@ -38,6 +41,7 @@ public class RingProgressView extends ViewGroup {
     private int viewHeight;
 
     private Paint circlePaint;
+    private Paint alphaCirclePaint;
 
     private AnimatorSet finish1AnimSet;
     private ValueAnimator finish3Animator;
@@ -48,7 +52,9 @@ public class RingProgressView extends ViewGroup {
     private boolean isFinish = false;
     private boolean isInitAnim = false;
     private float mRadius;
-    private Paint alphaCirclePaint;
+
+    private int progressColor = Color.parseColor("#4061FF");
+    private int textColor = Color.parseColor("#494A4B");
 
 
     public RingProgressView(Context context) {
@@ -70,35 +76,43 @@ public class RingProgressView extends ViewGroup {
         this.context = context;
         setWillNotDraw(false);
 
+        if (attrs != null) {
+            TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RingProgressView);
+            progressColor = typedArray.getColor(R.styleable.RingProgressView_ring_progress_color, progressColor);
+            textColor = typedArray.getColor(R.styleable.RingProgressView_text_color, textColor);
+            typedArray.recycle();
+        }
+
         initPaint();
 
         initView();
-
-
     }
 
     private void initPaint() {
         circlePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        circlePaint.setColor(Color.parseColor("#4061FF"));
+        circlePaint.setColor(progressColor);
 
         alphaCirclePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        alphaCirclePaint.setColor(Color.parseColor("#4061FF"));
+        alphaCirclePaint.setColor(progressColor);
         alphaCirclePaint.setAlpha(255);
     }
 
     private void initView() {
         ringView = new ImageView(context);
         ringView.setImageResource(R.drawable.ic_ring);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            ringView.setImageTintList(ColorStateList.valueOf(progressColor));
+        }
         addView(ringView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 
         progressText = new TextView(context);
         progressText.setText("%");
-        progressText.setTextColor(Color.parseColor("#494A4B"));
+        progressText.setTextColor(textColor);
         addView(progressText);
 
         progressValueText = new TextView(context);
         progressValueText.setText("0");
-        progressValueText.setTextColor(Color.parseColor("#494A4B"));
+        progressValueText.setTextColor(textColor);
         addView(progressValueText);
 
         checkView = new ImageView(context);
@@ -112,6 +126,7 @@ public class RingProgressView extends ViewGroup {
             return;
         }
 
+        // 外圈旋转动画
         ObjectAnimator animator = ObjectAnimator.ofFloat(ringView, "rotation", 360f, 0f);
         animator.setDuration(700);
         animator.setInterpolator(new LinearInterpolator());
@@ -119,6 +134,7 @@ public class RingProgressView extends ViewGroup {
         animator.setRepeatMode(ValueAnimator.RESTART);
         animator.start();
 
+        // 结束动画1 外圈缩小加变透明
         ObjectAnimator animatorX = ObjectAnimator.ofFloat(ringView, "scaleX", 1.0f, 0.48f);
         ObjectAnimator animatorY = ObjectAnimator.ofFloat(ringView, "scaleY", 1.0f, 0.48f);
         ObjectAnimator alphaAnim = ObjectAnimator.ofFloat(ringView, "alpha", 1.0f, 0.2f);
@@ -134,12 +150,14 @@ public class RingProgressView extends ViewGroup {
             }
         });
 
+        // 结束动画2 文字变透明
         ObjectAnimator textAlphaAnim1 = ObjectAnimator.ofFloat(progressText, "alpha", 1.0f, 0.0f);
         ObjectAnimator textAlphaAnim2 = ObjectAnimator.ofFloat(progressValueText, "alpha", 1.0f, 0.0f);
         finish2AnimSet = new AnimatorSet();
         finish2AnimSet.setDuration(400);
         finish2AnimSet.playTogether(textAlphaAnim1, textAlphaAnim2);
 
+        // 结束动画3 弹出背景圆圈
         finish3Animator = ValueAnimator.ofFloat(0, viewWidth * 0.95f / 2f);
         finish3Animator.setDuration(300);
         finish3Animator.setInterpolator(new LinearInterpolator());
@@ -156,6 +174,7 @@ public class RingProgressView extends ViewGroup {
             }
         });
 
+        // 结束动画4 对勾放大加逐渐显示
         ObjectAnimator checkViewAnimatorX = ObjectAnimator.ofFloat(checkView, "scaleX", 0.0f, 1.0f);
         ObjectAnimator checkViewAnimatorY = ObjectAnimator.ofFloat(checkView, "scaleY", 0.0f, 1.0f);
         ObjectAnimator checkViewAlphaAnim = ObjectAnimator.ofFloat(checkView, "alpha", 0.0f, 1.0f);
@@ -164,7 +183,7 @@ public class RingProgressView extends ViewGroup {
         finish4AnimSet.setInterpolator(new AccelerateInterpolator());
         finish4AnimSet.playTogether(checkViewAnimatorX, checkViewAnimatorY, checkViewAlphaAnim);
 
-
+        // 结束动画5 背景外圈逐渐透明
         finish5valueAnimator = ValueAnimator.ofFloat(1f, 0f);
         finish5valueAnimator.setDuration(500);
         finish5valueAnimator.setInterpolator(new AccelerateInterpolator());
@@ -196,12 +215,12 @@ public class RingProgressView extends ViewGroup {
         int checkViewH = MeasureSpec.makeMeasureSpec((int) (viewHeight * 0.35f), MeasureSpec.EXACTLY);
         measureChild(checkView, checkViewW, checkViewH);
 
-
         initAnim();
     }
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        // 摆放旋转图片在中间
         int ringViewWidth = ringView.getMeasuredWidth();
         int ringViewHeight = ringView.getMeasuredHeight();
         int ringL = (int) ((viewWidth - ringViewWidth) / 2f);
@@ -210,6 +229,7 @@ public class RingProgressView extends ViewGroup {
         int ringB = ringT + ringViewHeight;
         ringView.layout(ringL, ringT, ringR, ringB);
 
+        // 摆放%的位置
         int progressTextWidth = progressText.getMeasuredWidth();
         int progressTextHeight = progressText.getMeasuredHeight();
         int progressTextL = (int) (viewWidth * 0.84f - progressTextWidth);
@@ -218,6 +238,7 @@ public class RingProgressView extends ViewGroup {
         int progressTextB = progressTextT + progressTextHeight;
         progressText.layout(progressTextL, progressTextT, progressTextR, progressTextB);
 
+        // 摆放进度值的位置
         int progressValueTextWidth = progressValueText.getMeasuredWidth();
         int progressValueTextHeight = progressValueText.getMeasuredHeight();
         int progressValueTextL = (int) (progressTextL * 0.95f - progressValueTextWidth);
@@ -226,6 +247,7 @@ public class RingProgressView extends ViewGroup {
         int progressValueTextB = progressValueTextT + progressValueTextHeight;
         progressValueText.layout(progressValueTextL, progressValueTextT, progressValueTextR, progressValueTextB);
 
+        // 摆放对勾的位置
         int checkViewWidth = checkView.getMeasuredWidth();
         int checkViewHeight = checkView.getMeasuredHeight();
         int checkViewL = (int) ((viewWidth - checkViewWidth) / 2f);
@@ -287,6 +309,7 @@ public class RingProgressView extends ViewGroup {
         invalidate();
     }
 
+    // 完成的动画
     private void finishLoad() {
         if (isFinish) {
             return;

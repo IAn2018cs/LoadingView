@@ -27,4 +27,9 @@
         <attr name="line_color" format="color" />
     </declare-styleable>
 
+    <declare-styleable name="RingProgressView">
+        <attr name="ring_progress_color" format="color" />
+        <attr name="text_color" format="color" />
+    </declare-styleable>
+
 </resources>
